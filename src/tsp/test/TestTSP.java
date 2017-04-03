@@ -15,12 +15,20 @@ public class TestTSP {
 
     /** Expiración para que ninguna prueba tarde más de 5 segundos. */
     @Rule public Timeout expiracion = Timeout.seconds(5);
-        
+
     /**
      * Prueba unitaria para {@link TSP#getTamano}.
      */
     @Test public void testGetTamano(){
 	Assert.assertTrue(TSP.getTamano() == 277);
+    }
+
+    /**
+     * Prueba unitaria para {@link TSP#llenaCiudades}.
+     */
+    @Test public void testLlenaCiudades(){
+	TSP.llenaCiudades();
+	Assert.assertTrue(TSP.ciudades.length == 278);
     }
     
     

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 public class TSP{
 
-    private Ciudad[] ciudades; /* Arreglo de ciudades */
+    public static Ciudad[] ciudades; /* Arreglo de ciudades */
 
     /** 
      * Regresa el tamano del arreglo de ciudades 
@@ -33,8 +33,18 @@ public class TSP{
     /**
      * Llena el arreglo de ciudades utilizando la base de datos 
      */
-    public void llenaCiudades(){
-	return;
-    }	
-
+    public static void llenaCiudades(){
+	try{
+	    Conexion c = new Conexion(); /* Nos conectamos a la base */
+	    int tamano = getTamano(); /* Tamaño del arreglo de Ciudades */
+	    ciudades = new Ciudad[tamano+1];
+	    ResultSet rs = c.consulta("SELECT * FROM cities"); /* Conjunto de ciudades */
+	    while(rs.next()){
+		Ciudad nueva = new Ciudad(rs.getString("country"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"), rs.getInt("id"), rs.getInt("population"));
+		ciudades[nueva.getId()] = nueva;
+	    }
+	}catch(SQLException e){
+	    System.err.println(e.getMessage());
+	}
+    }
 }
