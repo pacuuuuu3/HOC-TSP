@@ -29,6 +29,17 @@ public class TestTSP {
     @Test public void testLlenaCiudades(){
 	TSP.llenaCiudades();
 	Assert.assertTrue(TSP.ciudades.length == 278);
+	Assert.assertTrue(TSP.ciudades[277].toString().equals("Odesa, Ukraine"));
+    }
+
+    /**
+     * Prueba unitaria para {@link TSP#llenaDistancias}.
+     */
+    @Test public void testLlenaDistancias(){
+	TSP.llenaDistancias();
+	for(int i = 0; i < 278; ++i)
+	    Assert.assertTrue(TSP.distancias[i][i] == 0.0);
+	Assert.assertTrue(TSP.distancias[11][229] == 1671159.82);
     }
     
     

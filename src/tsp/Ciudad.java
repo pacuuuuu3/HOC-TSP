@@ -38,4 +38,12 @@ public class Ciudad{
     public int getId(){
 	return this.id;
     }
+
+    /**
+     * Regresa la Ciudad como una cadena 
+     * @return Cadena que representa a la ciudad 
+     */
+    @Override public String toString(){
+	return this.nombre + ", " + this.pais;
+    }
 }
