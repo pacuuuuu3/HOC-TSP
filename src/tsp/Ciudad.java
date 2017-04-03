@@ -1,3 +1,5 @@
+package tsp;
+
 /**
  * Clase que representa una Ciudad del TSP
  * @author Victor Zamora Gutierrez
@@ -17,6 +19,7 @@ public class Ciudad{
      * @param id - El id de la ciudad en la base de datos 
      */
     public Ciudad(String nombre, double latitud, double longitud, int id){
+	this.nombre = nombre;
 	this.latitud = latitud;
 	this.longitud = longitud;
 	this.id = id;
