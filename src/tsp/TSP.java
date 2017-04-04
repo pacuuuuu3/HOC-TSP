@@ -15,6 +15,7 @@ public class TSP{
     public static Ciudad[] ciudades; /* Arreglo de ciudades */
     public static double[][] distancias; /* Arreglo de distancias entre las ciudades */
     private static Conexion c = new Conexion(); /* Conexión a la base de datos */
+    public static final double DEFAULT_DISTANCE = setDefaultDistance(); /* Distancia por omisión de dos ciudades desconectadas */
     
     /** 
      * Regresa el tamano del arreglo de ciudades 
@@ -29,6 +30,38 @@ public class TSP{
 	    System.err.println(e.getMessage());
 	}
 	return tamano;
+    }
+
+    /**
+     * Regresa la distancia entre dos ciudades.
+     * Si esta no existe, utiliza un valor por omisión. 
+     * @param c1 - Id de la primera ciudad
+     * @param c2 - Id de la segunda ciudad
+     * @return La distancia entre las dos ciudades
+     */
+    public static double getDistancia(int c1, int c2){
+	if(distancias[c1][c2] > 0)
+	    return distancias[c1][c2];
+	else if(distancias[c2][c1] > 0)
+	    return distancias[c2][c1];
+	else
+	    return DEFAULT_DISTANCE;
+    }
+
+    /**
+     * Regresa el valor de la distancia por omisión.
+     * Para este método, utilizo la máxima distancia * 2.
+     * @return La distancia por omisión entre dos ciudades desconectadas.     
+     */
+    public static double setDefaultDistance(){
+	double max = 0; /* La máxima distancia */
+	try{
+	    ResultSet rs = c.consulta("SELECT MAX(distance) as maxDistance from connections"); /* Dejo que SQL saque la máxima distancia */
+	    max = rs.getDouble("maxDistance"); /* Saco la máxima distancia */
+	}catch(SQLException e){
+	    System.err.println(e.getMessage());
+	}
+	return max*2;
     }
     
     /**
@@ -67,4 +100,13 @@ public class TSP{
 	    System.err.println(e.getMessage());
 	}
     }
+
+    /** 
+     * Inicializa por completo una instancia de TSP 
+     */
+    public static void inicializa(){
+	llenaCiudades();
+	llenaDistancias();
+    }
+    
 }

@@ -40,6 +40,19 @@ public class Ciudad{
     }
 
     /**
+     * Nos dice si la ciudad es igual a otra
+     * @param o - La ciudad con la que comparamos
+     * @return Si las ciudades son iguales
+     */
+    @Override
+    public boolean equals(Object o){
+	if(! (o instanceof Ciudad))
+	    return false;
+	Ciudad otra = (Ciudad) o; /* Hacemos cast */
+	return this.id == otra.getId();
+    }
+
+    /**
      * Regresa la Ciudad como una cadena 
      * @return Cadena que representa a la ciudad 
      */
