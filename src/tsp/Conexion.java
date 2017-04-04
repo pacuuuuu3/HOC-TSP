@@ -15,7 +15,9 @@ import java.sql.Statement;
 public class Conexion{
 
     private Connection c = null; /* Conexión a la base de datos */
-
+    private Statement stmt = null; 
+	
+    
     /**
      * Método que crea una conexión a la base de datos 
      */
@@ -24,6 +26,7 @@ public class Conexion{
 	try{
 	    Class.forName("org.sqlite.JDBC");
 	    c = DriverManager.getConnection("jdbc:sqlite:db/tsp.db"); /* Inicializamos la conexión */
+	    stmt = c.createStatement();
 	    /* Conexión creada */
 	}catch ( Exception e ) {
 		System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -39,11 +42,18 @@ public class Conexion{
     public ResultSet consulta(String consulta){
 	ResultSet rs = null;
 	try{
-	    Statement stmt = c.createStatement();
 	    rs = stmt.executeQuery(consulta);
 	}catch(SQLException e){
 	    System.err.println(e.getMessage());
 	}
 	return rs;
+    }
+
+    /**
+     * Cierra la conexión.
+     */
+    public void cierraConexion(){
+	try { if (stmt != null) stmt.close(); } catch (Exception e) {};
+	try { if (c != null) c.close(); } catch (Exception e) {};
     }
 }

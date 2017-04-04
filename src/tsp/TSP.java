@@ -28,6 +28,8 @@ public class TSP{
 	    tamano = cuenta.getInt(1); /* El tamaño de la tabla */
 	}catch(SQLException e){
 	    System.err.println(e.getMessage());
+	}finally{
+	    try { if (cuenta != null) cuenta.close(); } catch (Exception e) {};
 	}
 	return tamano;
     }
@@ -55,11 +57,14 @@ public class TSP{
      */
     public static double setDefaultDistance(){
 	double max = 0; /* La máxima distancia */
+	ResultSet rs = null;
 	try{
-	    ResultSet rs = c.consulta("SELECT MAX(distance) as maxDistance from connections"); /* Dejo que SQL saque la máxima distancia */
+	    rs = c.consulta("SELECT MAX(distance) as maxDistance from connections"); /* Dejo que SQL saque la máxima distancia */
 	    max = rs.getDouble("maxDistance"); /* Saco la máxima distancia */
 	}catch(SQLException e){
 	    System.err.println(e.getMessage());
+	}finally{
+	    try { if (rs != null) rs.close(); } catch (Exception e) {};
 	}
 	return max*2;
     }
@@ -68,16 +73,19 @@ public class TSP{
      * Llena el arreglo de ciudades utilizando la base de datos 
      */
     public static void llenaCiudades(){
+	ResultSet rs = null;
 	try{
 	    int tamano = getTamano(); /* Tamaño del arreglo de Ciudades */
 	    ciudades = new Ciudad[tamano+1];
-	    ResultSet rs = c.consulta("SELECT * FROM cities"); /* Conjunto de ciudades */
+	    rs = c.consulta("SELECT * FROM cities"); /* Conjunto de ciudades */
 	    while(rs.next()){
 		Ciudad nueva = new Ciudad(rs.getString("country"), rs.getString("name"), rs.getDouble("latitude"), rs.getDouble("longitude"), rs.getInt("id"), rs.getInt("population"));
 		ciudades[nueva.getId()] = nueva;
 	    }
 	}catch(SQLException e){
 	    System.err.println(e.getMessage());
+	}finally{
+	    try { if (rs != null) rs.close(); } catch (Exception e) {};
 	}
     }
 
@@ -85,11 +93,12 @@ public class TSP{
      * Llena el arreglo de distancias
      */
     public static void llenaDistancias(){
+	ResultSet rs = null;
 	try{
 	    int tamano = ciudades.length; /* Voy a suponer que el arreglo de Ciudades ya está inicializado */
 	    distancias = new double[tamano][tamano]; /* Inicializo el arreglo de distancias con tamaño (#Ciudades+1)^2, 
 						   * aunque podría ser menos si optimizara más */
-	    ResultSet rs = c.consulta("SELECT * FROM connections"); /* Tabla de conexiones */
+	    rs = c.consulta("SELECT * FROM connections"); /* Tabla de conexiones */
 	    while(rs.next()){
 		int indice1, indice2; /* Índices de las ciudades a conectar */
 		indice1 = rs.getInt("id_city_1");
@@ -98,6 +107,8 @@ public class TSP{
 	    }
 	}catch(SQLException e){
 	    System.err.println(e.getMessage());
+	}finally{
+	    try { if (rs != null) rs.close(); } catch (Exception e) {};
 	}
     }
 
@@ -105,8 +116,17 @@ public class TSP{
      * Inicializa por completo una instancia de TSP 
      */
     public static void inicializa(){
+	if(c == null)
+	    c = new Conexion();
 	llenaCiudades();
 	llenaDistancias();
+	c.cierraConexion();
     }
+
+    /**
+     * Algoritmo para calcular un lote
+     * @param s - La solución para la cuál calculamos el lote
+     */
+    
     
 }
