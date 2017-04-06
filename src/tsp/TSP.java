@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
-public class TSP{
+public final class TSP{
 
     public static Ciudad[] ciudades; /* Arreglo de ciudades */
     public static double[][] distancias; /* Arreglo de distancias entre las ciudades */
@@ -21,11 +21,9 @@ public class TSP{
     public static final int L = 500; /* Tamaño del lote */
     public static final double EPSILON = 0.0001; /* Epsilon de la temperatura */
     public static final double EPSILONP = 0.0001; /* Valor del equilibrio térmico */
-    public static final double PHI = 0.1; /* Factor de enfriamiento */
+    public static final double PHI = 0.9; /* Factor de enfriamiento */
     public static Random random; /* Generador de números aleatorios */
    
-    
-    
     /**
      * Singleton para obtener la conexión.
      * @return Una conexión a la base 
@@ -150,17 +148,17 @@ public class TSP{
      * Algoritmo para calcular un lote
      * @param s - La solución para la cuál calculamos el lote
      */
-    public Par<Double, Solucion> calculaLote(double temperatura, Solucion s){
+    public static Par<Double, Solucion> calculaLote(double temperatura, Solucion s){
 	int c = 0; /* Número de soluciones aceptadas hasta el momento */
 	double r = 0; /* La suma de los costos de las soluciones */
 	Solucion s1 = null; /* La siguiente solución por calcular */
-	int intentos = L*20; /* Número de intentos máximo */
+	int intentos = L*50; /* Número de intentos máximo */
 	while(c < L && (intentos-- != 0)){
 	    s1 = s.vecino();
 	    if(s1.costo() <= (s.costo() + temperatura)){
 		s = s1;
 		c++;
-		r = s1.costo();
+		r += s1.costo();
 	    }
 	}
 	return new Par<Double, Solucion>(new Double(r/L), s); /* Promedio de las soluciones aceptadas y última solución. */
@@ -172,7 +170,7 @@ public class TSP{
      * @param s - La solución inicial
      * @return La mejor solución obtenida.
      */
-    public Solucion aceptacionPorUmbrales(double temperatura, Solucion s){
+    public static Solucion aceptacionPorUmbrales(double temperatura, Solucion s){
 	Solucion minima = s; /* La solución que vamos a regresar */
 	double p = Double.MAX_VALUE; /* p = infinito */
 	double p1; /* p' en el pdf */
@@ -183,8 +181,12 @@ public class TSP{
 		Par<Double, Solucion> par = calculaLote(temperatura, s); /* Calculamos un nuevo lote */
 		p = par.primero;
 		s = par.segundo;
-		if(s.costo() < minima.costo())
+		if(s.costo() < minima.costo()){
 		    minima = s;
+		    /*for(int w: s.getSolucion())
+			System.out.printf("%d ", w);
+			System.out.printf("\nCosto: %f\n", s.costo());*/
+		}
 	    }
 	    temperatura *= PHI; /* Multiplicamos por el factor de enfriamiento */
 	}

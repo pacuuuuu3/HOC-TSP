@@ -11,6 +11,9 @@ public class Solucion{
     
     private int[] solucion; /* Arreglo de ids */
     private double valor; /* Valor de la solución */
+    public static final double C = 2.0; /* Valor para la función de costo */
+    private static double maximo; /* La distancia máxima entre las Ciudades de la solución */
+    private static double promedio; /* El promedio de las distancias */
     
     /**
      * Constructor 
@@ -19,9 +22,10 @@ public class Solucion{
     public Solucion(int[] solucion){
 	this.solucion = solucion;
 	this.valor = 0.0;
-	for(int i = 0; i < solucion.length-1; ++i){
+	for(int i = 0; i < solucion.length-1; ++i)
 	    this.valor += TSP.getDistancia(solucion[i], solucion[i+1]);
-	}
+       	maximo = this.maxP();
+	promedio = this.avgP();
     }
 
     /**
@@ -92,7 +96,10 @@ public class Solucion{
      * @return El costo de la solución
      */
     public double costo(){
-	return this.valor/(this.solucion.length * TSP.DEFAULT_DISTANCE);
+	double suma = 0.0; /* Suma de las d's */
+	for(int i = 1; i < solucion.length; ++i)
+	    suma += dPrima(solucion[i-1], solucion[i]);
+	return (suma / (promedio*(solucion.length-1)));
     }
 
     /** 
@@ -104,6 +111,64 @@ public class Solucion{
 	    if(TSP.getDistancia(solucion[i], solucion[i+1]) == TSP.DEFAULT_DISTANCE)
 		return false;
 	return true;
+    }
+
+    /**
+     * Saca la distancia máxima entre los elementos de la solución.
+     * @return La distancia máxima entre los elementos de la solución
+     */
+    public double maxP(){
+	double max = 0; /* El máximo que hemos visto */
+	for(int i = 0; i < solucion.length; i++)
+	    for(int j = i; j < solucion.length; j++)
+		if(TSP.distancias[solucion[i]][solucion[j]] > max)
+		    max = TSP.distancias[solucion[i]][solucion[j]];
+	return max;	
+    }
+
+    /**
+     * Sacamos el promedio de las distancias existentes en la gráfica.
+     * @return El promedio de las distancias 
+     */
+    public double avgP(){
+	int distancias = 0; /* El número de distancias sumadas */
+	double suma = 0; /* La suma de las distancias */
+	for(int i = 0; i < solucion.length; i++)
+	    for(int j = i; j < solucion.length; j++)
+		if(TSP.distancias[solucion[i]][solucion[j]] > 0){
+		    distancias++;
+		    suma += TSP.distancias[solucion[i]][solucion[j]];
+		}
+	return suma/distancias;
+    }
+
+    /**
+     * Sacamos la d' para calcular la función de costo
+     * @param i - Id de la primera ciudad
+     * @param j - Id de la segunda ciudad
+     * @return la función d' que regresa la distancia de las ciudades si están conectadas y MaxP * C e.o.c.
+     */
+    public static double dPrima(int i, int j){
+	if(TSP.distancias[i][j] > 0)
+	    return TSP.distancias[i][j];
+	else
+	    return maximo*C;
+    }
+    
+    
+    /**
+     * Regresa una cadena con información de la Solución.
+     * @return Una cadena con información de la Solución.
+     */
+    @Override
+    public String toString(){
+	String regreso = ""; /* Cadena a regresar */
+	regreso += "Valor: " + valor + ", Costo: " + this.costo() + ", factible: " + this.factible() + "\n";
+	regreso += "Ciudades: \n";
+	for(int ciudad : this.solucion)
+	    regreso += ciudad + ", ";
+	regreso += "\n";
+	return regreso;	
     }
     
 }

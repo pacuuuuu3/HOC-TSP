@@ -49,6 +49,7 @@ public class TestSolucion{
      */
     @Test public void testCosto(){
 	Assert.assertTrue(s.costo() > 0);
+	System.out.println(s.costo());
 	Assert.assertTrue(s.costo() <= 1);
     }
 
@@ -58,5 +59,21 @@ public class TestSolucion{
     @Test public void testFactible(){
 	Assert.assertFalse(s.factible());
 	Assert.assertTrue(s2.factible());
+    }
+
+    /**
+     * Prueba unitaria para {@link Solucion#maxP}.
+     */
+    @Test public void testMaxP(){
+	Assert.assertTrue(s.maxP()==1778054.73);
+	Assert.assertTrue(s2.maxP() == 2723789.75);
+    }
+
+    /**
+     * Prueba unitaria para {@link Solucion#avgP}.
+     */
+    @Test public void testAvgP(){
+	Assert.assertTrue(s.avgP()==1778054.73);
+	Assert.assertTrue(s2.avgP()== ((774005.28+2723789.75+1988686.23)/3));
     }
 }

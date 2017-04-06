@@ -10,7 +10,7 @@
     <jar jarfile="tsp.jar">
       <zipfileset dir="${build.dir}" prefix="" />
       <manifest>
-        <attribute name="Main-Class" value="tsp.TSP"/>
+        <attribute name="Main-Class" value="tsp.Recocido"/>
       </manifest>
     </jar>
   </target>
