@@ -62,7 +62,7 @@ public class TestTSP {
      *  Prueba unitaria para {@link TSP#aceptacionPorUmbrales}.
      */
     @Test public void testAceptacionPorUmbrales(){
-	TSP.inicializa(0);
+	TSP.inicializa(-100);
 	int[] ciudades = {271, 1, 269, 277, 272, 218};
 	Solucion cruda = new Solucion(ciudades);
 	Assert.assertFalse(cruda.factible());

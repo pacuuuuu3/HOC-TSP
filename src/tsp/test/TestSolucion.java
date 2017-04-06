@@ -50,7 +50,6 @@ public class TestSolucion{
     @Test public void testCosto(){
 	Assert.assertTrue(s.costo() > 0);
 	System.out.println(s.costo());
-	Assert.assertTrue(s.costo() <= 1);
     }
 
     /**

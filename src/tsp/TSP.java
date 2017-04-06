@@ -155,10 +155,10 @@ public final class TSP{
 	int intentos = L*50; /* Número de intentos máximo */
 	while(c < L && (intentos-- != 0)){
 	    s1 = s.vecino();
-	    if(s1.costo() <= (s.costo() + temperatura)){
+	    if(s1.getCosto() <= (s.getCosto() + temperatura)){
 		s = s1;
 		c++;
-		r += s1.costo();
+		r += s1.getCosto();
 	    }
 	}
 	return new Par<Double, Solucion>(new Double(r/L), s); /* Promedio de las soluciones aceptadas y última solución. */
@@ -181,7 +181,7 @@ public final class TSP{
 		Par<Double, Solucion> par = calculaLote(temperatura, s); /* Calculamos un nuevo lote */
 		p = par.primero;
 		s = par.segundo;
-		if(s.costo() < minima.costo()){
+		if(s.getCosto() < minima.getCosto()){
 		    minima = s;
 		    /*for(int w: s.getSolucion())
 			System.out.printf("%d ", w);

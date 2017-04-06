@@ -1,5 +1,7 @@
 package tsp;
 
+import java.sql.*;
+
 /**
  * Clase principal en el recocido simulado.
  * @author Víctor Zamora Gutiérrez

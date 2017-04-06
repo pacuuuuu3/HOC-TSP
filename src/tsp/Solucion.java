@@ -10,7 +10,7 @@ import java.util.Random;
 public class Solucion{
     
     private int[] solucion; /* Arreglo de ids */
-    private double valor; /* Valor de la solución */
+    private double costo; /* Valor de la solución */
     public static final double C = 2.0; /* Valor para la función de costo */
     private static double maximo; /* La distancia máxima entre las Ciudades de la solución */
     private static double promedio; /* El promedio de las distancias */
@@ -21,11 +21,9 @@ public class Solucion{
      */
     public Solucion(int[] solucion){
 	this.solucion = solucion;
-	this.valor = 0.0;
-	for(int i = 0; i < solucion.length-1; ++i)
-	    this.valor += TSP.getDistancia(solucion[i], solucion[i+1]);
-       	maximo = this.maxP();
+	maximo = this.maxP();
 	promedio = this.avgP();
+	this.costo = this.costo();
     }
 
     /**
@@ -35,7 +33,7 @@ public class Solucion{
      */
     public Solucion(int[] solucion, double valor){
 	this.solucion = solucion;
-	this.valor = valor;
+	this.costo = valor;
     }
 
     /**
@@ -51,36 +49,36 @@ public class Solucion{
 	}
 	int[] nuevaSolucion = new int[solucion.length]; /* Arreglo de enteros para la nueva Solución */
 	System.arraycopy(solucion, 0, nuevaSolucion, 0, solucion.length);
-	double nuevoValor = this.valor; /* Valor de la nueva solución */
+	double nuevoValor = this.costo; /* Valor de la nueva solución */
 	
 	if(cambio1-1 >= 0)
-	    nuevoValor -= TSP.getDistancia(nuevaSolucion[cambio1-1], nuevaSolucion[cambio1]);
+	    nuevoValor -= dPrima(nuevaSolucion[cambio1-1], nuevaSolucion[cambio1])/(promedio*(solucion.length-1));
 	if(cambio2-1 >= 0)
-	    nuevoValor -= TSP.getDistancia(nuevaSolucion[cambio2-1], nuevaSolucion[cambio2]);
+	    nuevoValor -= dPrima(nuevaSolucion[cambio2-1], nuevaSolucion[cambio2])/(promedio*(solucion.length-1));
 	if(cambio1+1 < nuevaSolucion.length)
-	    nuevoValor -= TSP.getDistancia(nuevaSolucion[cambio1], nuevaSolucion[cambio1+1]);
+	    nuevoValor -= dPrima(nuevaSolucion[cambio1], nuevaSolucion[cambio1+1])/(promedio*(solucion.length-1));
 	if(cambio2+1 < nuevaSolucion.length)
-	    nuevoValor -= TSP.getDistancia(nuevaSolucion[cambio2], nuevaSolucion[cambio2+1]);
+	    nuevoValor -= dPrima(nuevaSolucion[cambio2], nuevaSolucion[cambio2+1])/(promedio*(solucion.length-1));
 	int temp = nuevaSolucion[cambio1]; /* Variable temporal */
 	nuevaSolucion[cambio1] = nuevaSolucion[cambio2];
 	nuevaSolucion[cambio2] = temp;
 	if(cambio1-1 >= 0)
-	    nuevoValor += TSP.getDistancia(nuevaSolucion[cambio1-1], nuevaSolucion[cambio1]);
+	    nuevoValor += dPrima(nuevaSolucion[cambio1-1], nuevaSolucion[cambio1])/(promedio*(solucion.length-1));
 	if(cambio2-1 >= 0)
-	    nuevoValor += TSP.getDistancia(nuevaSolucion[cambio2-1], nuevaSolucion[cambio2]);
+	    nuevoValor += dPrima(nuevaSolucion[cambio2-1], nuevaSolucion[cambio2])/(promedio*(solucion.length-1));
 	if(cambio1+1 < nuevaSolucion.length)
-	    nuevoValor += TSP.getDistancia(nuevaSolucion[cambio1], nuevaSolucion[cambio1+1]);
+	    nuevoValor += dPrima(nuevaSolucion[cambio1], nuevaSolucion[cambio1+1])/(promedio*(solucion.length-1));
 	if(cambio2+1 < nuevaSolucion.length)
-	    nuevoValor += TSP.getDistancia(nuevaSolucion[cambio2], nuevaSolucion[cambio2+1]);
+	    nuevoValor += dPrima(nuevaSolucion[cambio2], nuevaSolucion[cambio2+1])/(promedio*(solucion.length-1));
 	return new Solucion(nuevaSolucion, nuevoValor);
     }
 
     /**
-     * Regresa el valor de la solucion (no es el costo, pues no esta normalizado) 
-     * @return El valor de la solución
+     * Regresa el costo de la solucion 
+     * @return El costo de la solución
      */
-    public double getValor(){
-	return this.valor;
+    public double getCosto(){
+	return this.costo;
     }
 
     /** 
@@ -154,6 +152,17 @@ public class Solucion{
 	else
 	    return maximo*C;
     }
+
+    /**
+     * Regresa el valor (la suma de las distancias)
+     * @return la suma de las distancias de la solución
+     */
+    public double getValor(){
+	double regreso = 0.0; /* Valor a regresar */
+	for(int i = 0; i < this.solucion.length -1; ++i)
+	    regreso += TSP.getDistancia(solucion[i], solucion[i+1]);
+	return regreso;
+    }
     
     
     /**
@@ -163,7 +172,7 @@ public class Solucion{
     @Override
     public String toString(){
 	String regreso = ""; /* Cadena a regresar */
-	regreso += "Valor: " + valor + ", Costo: " + this.costo() + ", factible: " + this.factible() + "\n";
+	regreso += "Valor: " + getValor() + ", Costo: " + this.getCosto() + ", factible: " + this.factible() + "\n";
 	regreso += "Ciudades: \n";
 	for(int ciudad : this.solucion)
 	    regreso += ciudad + ", ";
