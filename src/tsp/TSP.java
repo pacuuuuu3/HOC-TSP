@@ -14,14 +14,25 @@ public class TSP{
 
     public static Ciudad[] ciudades; /* Arreglo de ciudades */
     public static double[][] distancias; /* Arreglo de distancias entre las ciudades */
-    private static Conexion c = new Conexion(); /* Conexión a la base de datos */
+    private static Conexion c; /* Conexión a la base de datos */
     public static final double DEFAULT_DISTANCE = setDefaultDistance(); /* Distancia por omisión de dos ciudades desconectadas */
+
+    /**
+     * Singleton para obtener la conexión.
+     * @return Una conexión a la base 
+     */
+    public static Conexion getConexion(){
+	if(c==null || !c.valida())
+	    return new Conexion();
+	return c;
+    }
     
     /** 
      * Regresa el tamano del arreglo de ciudades 
      * @return el tamano del arreglo de ciudades 
      */
     public static int getTamano(){
+	c = getConexion();
 	int tamano = -1; /* Tamaño de la tabla */
 	ResultSet cuenta = c.consulta("SELECT count(*) FROM cities"); /* Contamos las ciudades */
        	try{
@@ -56,6 +67,7 @@ public class TSP{
      * @return La distancia por omisión entre dos ciudades desconectadas.     
      */
     public static double setDefaultDistance(){
+	c = getConexion();
 	double max = 0; /* La máxima distancia */
 	ResultSet rs = null;
 	try{
@@ -73,6 +85,7 @@ public class TSP{
      * Llena el arreglo de ciudades utilizando la base de datos 
      */
     public static void llenaCiudades(){
+	c = getConexion();
 	ResultSet rs = null;
 	try{
 	    int tamano = getTamano(); /* Tamaño del arreglo de Ciudades */
@@ -93,6 +106,7 @@ public class TSP{
      * Llena el arreglo de distancias
      */
     public static void llenaDistancias(){
+	c = getConexion();
 	ResultSet rs = null;
 	try{
 	    int tamano = ciudades.length; /* Voy a suponer que el arreglo de Ciudades ya está inicializado */
@@ -116,8 +130,6 @@ public class TSP{
      * Inicializa por completo una instancia de TSP 
      */
     public static void inicializa(){
-	if(c == null)
-	    c = new Conexion();
 	llenaCiudades();
 	llenaDistancias();
 	c.cierraConexion();

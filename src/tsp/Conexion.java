@@ -33,6 +33,8 @@ public class Conexion{
 		System.exit(0);
 	}
     }
+     
+    
 
     /**
      * Realiza una consulta
@@ -47,6 +49,17 @@ public class Conexion{
 	    System.err.println(e.getMessage());
 	}
 	return rs;
+    }
+
+    /**
+     * Nos dice si la conexión es válida 
+     * @return Si la conexión es válida */
+    public boolean valida(){
+	try{
+	    return this.c.isValid(0);
+	}catch(SQLException e){
+	    return false;
+	}
     }
 
     /**
