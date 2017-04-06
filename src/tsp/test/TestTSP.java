@@ -17,7 +17,7 @@ public class TestTSP {
      * Inicializa la instancia de TSP sobre la que haremos pruebas 
      */
     public TestTSP(){
-	TSP.inicializa();
+	TSP.inicializa(0);
     }
     
     /** Expiración para que ninguna prueba tarde más de 5 segundos. */

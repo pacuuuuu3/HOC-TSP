@@ -6,9 +6,11 @@ package tsp;
  * @version 1.0
  */
 
+import utileria.Par;
 import tsp.Conexion;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 
 public class TSP{
 
@@ -16,13 +18,16 @@ public class TSP{
     public static double[][] distancias; /* Arreglo de distancias entre las ciudades */
     private static Conexion c; /* Conexión a la base de datos */
     public static final double DEFAULT_DISTANCE = setDefaultDistance(); /* Distancia por omisión de dos ciudades desconectadas */
-
+    public static final int L = 500; /* Tamaño del lote */
+    public static Random random; /* Generador de números aleatorios */
+    
+    
     /**
      * Singleton para obtener la conexión.
      * @return Una conexión a la base 
      */
     public static Conexion getConexion(){
-	if(c==null || !c.valida())
+	if(c == null || !c.valida())
 	    return new Conexion();
 	return c;
     }
@@ -55,8 +60,6 @@ public class TSP{
     public static double getDistancia(int c1, int c2){
 	if(distancias[c1][c2] > 0)
 	    return distancias[c1][c2];
-	else if(distancias[c2][c1] > 0)
-	    return distancias[c2][c1];
 	else
 	    return DEFAULT_DISTANCE;
     }
@@ -78,6 +81,7 @@ public class TSP{
 	}finally{
 	    try { if (rs != null) rs.close(); } catch (Exception e) {};
 	}
+	c.cierraConexion();
 	return max*2;
     }
     
@@ -118,6 +122,7 @@ public class TSP{
 		indice1 = rs.getInt("id_city_1");
 		indice2 = rs.getInt("id_city_2");
 		distancias[indice1][indice2] = rs.getDouble("distance");
+		distancias[indice2][indice1] = distancias[indice1][indice2];
 	    }
 	}catch(SQLException e){
 	    System.err.println(e.getMessage());
@@ -127,9 +132,11 @@ public class TSP{
     }
 
     /** 
-     * Inicializa por completo una instancia de TSP 
+     * Inicializa por completo una instancia de TSP
+     * @param seed - La semilla del generador de números aleatorios.
      */
-    public static void inicializa(){
+    public static void inicializa(long seed){
+	random = new Random(seed);
 	llenaCiudades();
 	llenaDistancias();
 	c.cierraConexion();
@@ -139,6 +146,21 @@ public class TSP{
      * Algoritmo para calcular un lote
      * @param s - La solución para la cuál calculamos el lote
      */
+    public Par<Double, Solucion> calculaLote(double temperatura, Solucion s){
+	int c = 0; /* Número de soluciones aceptadas hasta el momento */
+	double r = 0; /* La suma de los costos de las soluciones */
+	Solucion s1 = null; /* La siguiente solución por calcular */
+	while(c < L){
+	    s1 = s.vecino();
+	    if(s1.costo() <= (s.costo() + temperatura)){
+		s = s1;
+		c++;
+		r = s1.costo();
+	    }
+	}
+	return new Par<>(r/L, s); /* Promedio de las soluciones aceptadas y última solución. */
+    }
+    
     
     
 }

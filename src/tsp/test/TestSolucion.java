@@ -25,11 +25,11 @@ public class TestSolucion{
      * Incializa instancia de TSP.
      */
     public TestSolucion(){
-	TSP.inicializa();
+	TSP.inicializa(0);
 	this.sol = new int[3];
 	for(int i = 0; i < 3; ++i)
 	    sol[i] = i+1;
-	this.s = new Solucion(this.sol, 0);
+	this.s = new Solucion(this.sol);
     }
     
     /**
@@ -38,7 +38,7 @@ public class TestSolucion{
     @Test public void testVecino(){
 	
 	Assert.assertTrue(s.getValor() - (1778054.73 + TSP.DEFAULT_DISTANCE) < 0.005);
-	s.vecino();
+	s = s.vecino();
 	Assert.assertTrue(s.getValor() - (1778054.73 + TSP.DEFAULT_DISTANCE) < 0.005);
     }
 
@@ -46,6 +46,7 @@ public class TestSolucion{
      * Prueba unitaria para {@link Solucion#costo}.
      */
     @Test public void testCosto(){
-	Assert.assertTrue(s.costo() > 0 && s.costo() <= 1);
+	Assert.assertTrue(s.costo() > 0);
+	Assert.assertTrue(s.costo() <= 1);
     }
 }

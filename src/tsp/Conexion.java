@@ -33,9 +33,7 @@ public class Conexion{
 		System.exit(0);
 	}
     }
-     
     
-
     /**
      * Realiza una consulta
      * @param consulta - Una consulta sql
