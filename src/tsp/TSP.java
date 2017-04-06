@@ -19,7 +19,11 @@ public class TSP{
     private static Conexion c; /* Conexión a la base de datos */
     public static final double DEFAULT_DISTANCE = setDefaultDistance(); /* Distancia por omisión de dos ciudades desconectadas */
     public static final int L = 500; /* Tamaño del lote */
+    public static final double EPSILON = 0.0001; /* Epsilon de la temperatura */
+    public static final double EPSILONP = 0.0001; /* Valor del equilibrio térmico */
+    public static final double PHI = 0.1; /* Factor de enfriamiento */
     public static Random random; /* Generador de números aleatorios */
+   
     
     
     /**
@@ -150,7 +154,8 @@ public class TSP{
 	int c = 0; /* Número de soluciones aceptadas hasta el momento */
 	double r = 0; /* La suma de los costos de las soluciones */
 	Solucion s1 = null; /* La siguiente solución por calcular */
-	while(c < L){
+	int intentos = L*20; /* Número de intentos máximo */
+	while(c < L && (intentos-- != 0)){
 	    s1 = s.vecino();
 	    if(s1.costo() <= (s.costo() + temperatura)){
 		s = s1;
@@ -158,9 +163,31 @@ public class TSP{
 		r = s1.costo();
 	    }
 	}
-	return new Par<>(r/L, s); /* Promedio de las soluciones aceptadas y última solución. */
+	return new Par<Double, Solucion>(new Double(r/L), s); /* Promedio de las soluciones aceptadas y última solución. */
     }
-    
-    
-    
+
+    /**
+     * Método de aceptación por umbrales en el recocido simulado 
+     * @param temperatura - Temperatura inicial.
+     * @param s - La solución inicial
+     * @return La mejor solución obtenida.
+     */
+    public Solucion aceptacionPorUmbrales(double temperatura, Solucion s){
+	Solucion minima = s; /* La solución que vamos a regresar */
+	double p = Double.MAX_VALUE; /* p = infinito */
+	double p1; /* p' en el pdf */
+	while(temperatura > EPSILON){
+	    p1 = 0;
+	    while(Math.abs(p-p1) > EPSILONP){
+		p1 = p;
+		Par<Double, Solucion> par = calculaLote(temperatura, s); /* Calculamos un nuevo lote */
+		p = par.primero;
+		s = par.segundo;
+		if(s.costo() < minima.costo())
+		    minima = s;
+	    }
+	    temperatura *= PHI; /* Multiplicamos por el factor de enfriamiento */
+	}
+	return minima;
+    }    
 }
