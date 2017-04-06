@@ -18,7 +18,7 @@ public class TestSolucion{
     @Rule public Timeout expiracion = Timeout.seconds(5);
 
     private int[] sol;
-    private Solucion s; 
+    private Solucion s, s2; 
 
     /**
      * Constructor.
@@ -29,7 +29,9 @@ public class TestSolucion{
 	this.sol = new int[3];
 	for(int i = 0; i < 3; ++i)
 	    sol[i] = i+1;
+	int[] sol2 = {268, 270, 277};
 	this.s = new Solucion(this.sol);
+	this.s2 = new Solucion(sol2);
     }
     
     /**
@@ -48,5 +50,13 @@ public class TestSolucion{
     @Test public void testCosto(){
 	Assert.assertTrue(s.costo() > 0);
 	Assert.assertTrue(s.costo() <= 1);
+    }
+
+    /**
+     * Prueba unitaria para {@link Solucion#factible}.
+     */
+    @Test public void testFactible(){
+	Assert.assertFalse(s.factible());
+	Assert.assertTrue(s2.factible());
     }
 }

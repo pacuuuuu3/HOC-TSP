@@ -94,4 +94,16 @@ public class Solucion{
     public double costo(){
 	return this.valor/(this.solucion.length * TSP.DEFAULT_DISTANCE);
     }
+
+    /** 
+     * Nos dice si la solución es factible.
+     * @return si la solución es factible. 
+     */
+    public boolean factible(){
+	for(int i = 0; i < solucion.length-1; ++i)
+	    if(TSP.getDistancia(solucion[i], solucion[i+1]) == TSP.DEFAULT_DISTANCE)
+		return false;
+	return true;
+    }
+    
 }
