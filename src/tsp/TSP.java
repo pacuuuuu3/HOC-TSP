@@ -11,6 +11,9 @@ import tsp.Conexion;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public final class TSP{
 
@@ -23,7 +26,8 @@ public final class TSP{
     public static final double EPSILONP = 0.0001; /* Valor del equilibrio térmico */
     public static final double PHI = 0.9; /* Factor de enfriamiento */
     public static Random random; /* Generador de números aleatorios */
-   
+    public static long semilla; /* La semilla de esta instancia de TSP */
+    
     /**
      * Singleton para obtener la conexión.
      * @return Una conexión a la base 
@@ -138,6 +142,7 @@ public final class TSP{
      * @param seed - La semilla del generador de números aleatorios.
      */
     public static void inicializa(long seed){
+	semilla = seed; /* Guardo la semilla para usarla en otras cosas */
 	random = new Random(seed);
 	llenaCiudades();
 	llenaDistancias();
@@ -146,13 +151,15 @@ public final class TSP{
 
     /**
      * Algoritmo para calcular un lote
+     * @param temperatura - La temperatura del sistema
      * @param s - La solución para la cuál calculamos el lote
+     * @return un par con el costo promedio del lote y la última solución aceptada
      */
     public static Par<Double, Solucion> calculaLote(double temperatura, Solucion s){
 	int c = 0; /* Número de soluciones aceptadas hasta el momento */
 	double r = 0; /* La suma de los costos de las soluciones */
 	Solucion s1 = null; /* La siguiente solución por calcular */
-	int intentos = L*50; /* Número de intentos máximo */
+	int intentos = L*L; /* Número de intentos máximo */
 	while(c < L && (intentos-- != 0)){
 	    s1 = s.vecino();
 	    if(s1.getCosto() <= (s.getCosto() + temperatura)){
@@ -161,9 +168,11 @@ public final class TSP{
 		r += s1.getCosto();
 	    }
 	}
+	if(intentos == 0)
+	    return null;
 	return new Par<Double, Solucion>(new Double(r/L), s); /* Promedio de las soluciones aceptadas y última solución. */
     }
-
+    
     /**
      * Método de aceptación por umbrales en el recocido simulado 
      * @param temperatura - Temperatura inicial.
@@ -179,17 +188,55 @@ public final class TSP{
 	    while(Math.abs(p-p1) > EPSILONP){
 		p1 = p;
 		Par<Double, Solucion> par = calculaLote(temperatura, s); /* Calculamos un nuevo lote */
+		if(par == null)
+		    return minima;
 		p = par.primero;
 		s = par.segundo;
 		if(s.getCosto() < minima.getCosto()){
 		    minima = s;
-		    /*for(int w: s.getSolucion())
-			System.out.printf("%d ", w);
-			System.out.printf("\nCosto: %f\n", s.costo());*/
 		}
 	    }
 	    temperatura *= PHI; /* Multiplicamos por el factor de enfriamiento */
 	}
 	return minima;
-    }    
+    }
+
+    /**
+     * Método de aceptación por umbrales que además guarda los valores de las soluciones aceptadas 
+     * @param temperatura - Temperatura inicial.
+     * @param s - La solución inicial
+     * @return La mejor solución obtenida.
+     */
+    public static Solucion aceptacionPorUmbralesGuarda(double temperatura, Solucion s){
+	Solucion minima = s; /* La solución que vamos a regresar */
+	try{
+	    File file = new File("graficas/Corrida" + semilla + ".txt"); /* Archivo sobre el que escribimos */
+	    file.createNewFile();
+	    FileWriter writer = new FileWriter(file, true); /* Escritor */
+	    
+	    double p = Double.MAX_VALUE; /* p = infinito */
+	    double p1; /* p' en el pdf */
+	    while(temperatura > EPSILON){
+		p1 = 0;
+		while(Math.abs(p-p1) > EPSILONP){
+		    p1 = p;
+		    Par<Double, Solucion> par = calculaLote(temperatura, s); /* Calculamos un nuevo lote */
+		    p = par.primero;
+		    s = par.segundo;
+		    writer.write("E: "+ s.getCosto() + "\n"); /* Guardamos las aceptadas */
+		    if(s.getCosto() < minima.getCosto()){
+			minima = s;
+		    }
+		}
+		temperatura *= PHI; /* Multiplicamos por el factor de enfriamiento */
+	    }
+	    writer.flush();
+	    writer.close();
+	}catch(IOException e){
+	    System.out.println(e.getMessage());
+	}
+	return minima;
+    }
+
+    
 }

@@ -11,7 +11,7 @@ public class Solucion{
     
     private int[] solucion; /* Arreglo de ids */
     private double costo; /* Valor de la solución */
-    public static final double C = 2.0; /* Valor para la función de costo */
+    public static final double C = 2; /* Valor para la función de costo */
     private static double maximo; /* La distancia máxima entre las Ciudades de la solución */
     private static double promedio; /* El promedio de las distancias */
     
