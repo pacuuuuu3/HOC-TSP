@@ -39,6 +39,7 @@ public class Solucion{
     /**
      * Función vecino para el recocido simulado 
      * Transforma a la solución en otra solución vecino y cambia su valor
+     * @return La solución vecina
      */
     public Solucion vecino(){
 	int cambio1, cambio2; /* Índices a intercambiar */
