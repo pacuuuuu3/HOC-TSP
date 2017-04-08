@@ -58,58 +58,21 @@ public class Recocido extends Thread{
 	    try{if(br != null)br.close();}catch(Exception e){}
 	}
     }
-    
-    public static void main(String[] args){
-	leeCiudades("Ciudades.txt");
-	for(int ciudad: ciudades)
-	    System.out.println(ciudad);
-	// int[] ciudadesCanek = {1, 5, 9, 12, 16, 22, 23, 29, 30, 31,
-    // 			       39, 48, 52, 56, 58, 62, 65, 66, 70, 75,
-    // 			       80, 84, 86, 90, 92, 94, 95, 101, 107,
-    // 			       117, 119, 122, 133, 135, 143, 144, 146,
-    // 			       147, 150, 158, 159, 160, 166, 167, 176,
-    // 			       178, 179, 185, 186, 188, 190, 191, 194,
-    // 			       198, 200, 203, 207, 209, 213, 215, 216,
-    // 			       220, 221, 224, 227, 232, 233, 235, 238,
-    // 			       241, 244, 248, 250, 254, 264, 266, 274, 276};
-    // 	long startingSeed = Long.parseLong(args[0]);
-    // 	long endingSeed = Long.parseLong(args[1]);
-    // 	for(long i = startingSeed; i < endingSeed; ++i){
-    // 	   TSP.inicializa(i);
-    // 	   Solucion cruda = new Solucion(ciudadesCanek); /* Solución con las ciudades de Canek */
-    // 	   Solucion s = TSP.aceptacionPorUmbrales(4.0, cruda); /* Solución tras el recocido */
-    // 	  escribeArchivo(s, i);
-    // 	}
-    // 	TSP.inicializa(72);
-    // 	Solucion cruda = new Solucion(ciudadesCanek);
-    // 	Solucion sol = TSP.aceptacionPorUmbralesGuarda(4.0, cruda);
-    // 	System.out.println(sol);
 
-    // 	int factibles = 0;
-    // 	double minCosto = Double.MAX_VALUE;
-    // 	int mejorsemilla = 0;
-    // 	try{
-    // 	    for(int i = 0; i < 150; ++i){
-    // 		File file = new File("pruebas/Corrida" + i + ".txt");
-    // 		FileReader fr = new FileReader(file);
-    // 		BufferedReader br = new BufferedReader(fr);
-    // 		String s;
-    // 		s = br.readLine();
-    // 		String parts[] = s.split(",");
-    // 		Scanner sc = new Scanner(parts[1]);
-    // 		String parts2[] = parts[1].split(" "); 
-    // 		double costo = Double.parseDouble(parts2[2]);
-    // 		if(costo < minCosto){
-    // 		    minCosto = costo;
-    // 		    mejorsemilla = i;
-    // 		}
-    // 		if(s.contains("factible: true"))
-    // 		    factibles++;
-    // 	    }
-    // 	}catch(IOException e){
-    // 	}
-    // 	System.out.println((double)factibles/150.0);
-    // 	System.out.println(minCosto);
-    // 	System.out.println(mejorsemilla);
+    /**
+     * Ejecuta un recocido con una semilla dada y un conjunto de ciudades sacado de un archivo.
+     * @param args - Lista de argumentos (dados por el usuario)
+     */
+    public static void main(String[] args){
+	try{
+	    long seed = Long.parseLong(args[0]); /* Semilla */
+	    leeCiudades(args[1]);
+	    TSP.inicializa(seed);
+	    Solucion cruda = new Solucion(ciudades);
+	    Solucion sol = TSP.aceptacionPorUmbralesGuarda(4.0, cruda);
+	    System.out.println(sol); /* Imprimimos la solución que obtuvimos */	    
+	}catch(Exception e){
+	    System.err.println("Uso del programa java -jar tsp.jar <semilla> <archivo_ciudades>, donde semilla es la semilla a usar y archivo_ciudades es un archivo con los ids de las ciudades de la instancia a evaluar, separados por coma y espacio."); 
+	}
      }   
 }
